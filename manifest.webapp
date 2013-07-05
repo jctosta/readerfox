@@ -12,6 +12,10 @@
   "permissions": {
     "systemXHR": {}
   },
+  "developer": {
+    "name": "Carlos Tosta",
+    "url": "http://www.rubyout.com"
+  },
   "type": "privileged",
   "activities": {
     "view": {

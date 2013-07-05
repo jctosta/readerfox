@@ -3,7 +3,7 @@
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html manifest="offline.appcache" class="no-js" lang="en"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
         <meta charset=utf-8>
@@ -14,28 +14,35 @@
             <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
-        <link href="js/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <!--<link href="js/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">-->
+        <link rel="stylesheet" type="text/css" href="js/libs/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="app.css">
         <link rel="stylesheet" type="text/css" href="js/libs/bootstrap/css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" type="text/css" href="css/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/font-lobster/stylesheet.css">
  
     </head>
     <body>
 
-    	<div class='navbar navbar-inverse navbar-fixed-top'>
+    	<div class='navbar navbar-fixed-top'>
     		<div class='navbar-inner'>
     			<div class='container'>
     				<button type='button' class='btn btn-navbar' data-toggle='collapse' data-target='.nav-collapse'>
-    					<span class="icon-bar"></span>
-            			<span class="icon-bar"></span>
-            			<span class="icon-bar"></span>
+    					<span class="icon-reorder icon-white"></span>
     				</button>
-    				<button type='button' class='btn btn-navbar' id='btn_refresh' style='color: white;'>
-    					<span class='icon-refresh on icon-check-empty'></span>
+    				<button type='button' class='btn btn-navbar' id='btn_refresh'>
+    					<span class='icon-refresh icon-white'></span>
     				</button>
-    				<a class='brand' href='#'>ReaderFox</a>
+                    <!--<button type='button' class='btn btn-navbar' id='btn_home'>
+                        <span class='icon-home icon-white'></span>
+                    </button>-->
+    				<button type='button' class='btn btn-navbar' id='btn_add_feed'>
+    					<span class='icon-plus icon-white'></span>
+    				</button>
+    				<a class='brand' href='#'><i class='icon-rss'></i> ReaderFox</a>
     				<div class='nav-collapse collapse'>
     					<ul class='nav'>
-    						<li class='active'><a href="#">Home</a></li>
+    						<li class='active'><a id='menu_home' href="#">Home</a></li>
     						<li><a href="#">About</a></li>
     						<li><a href="#">Contact</a></li>
     					</ul>
@@ -44,19 +51,30 @@
     		</div>
     	</div>
 
-    	<div class='container'>
-        	<article id='article'>
-        		<header>
-          			<h2><a id='article_title'></a></h2>
-          			<img id='article_image' /> 
-        		</header>
-        		<section id='article_content'></section>
-        	</article>
+    	<div class='container' id='feed_view'>
+        	<div class="accordion" id='feed_list'>
+        	</div>
+    	</div>
+    	<div class='container' id='user_feeds'>
+    		<legend>Feed List</legend>
+
+            <div id='feeds_list'></div>
+    	</div>
+
+    	<div class='container' id='add_feed'>
+
+    		<legend>Add Feed</legend>
+    		<div class="form-inline">
+    			<input type='url' placeholder='Enter feed URL...' id='feed_url'/>
+    			<button type='button' class='btn btn-primary' id='btn_save_feed'>Add</button>
+    		</div>
+    		
     	</div>
 
         
     	<script type="text/javascript" src='js/libs/jquery-2.0.3.min.js'></script>
         <script src="js/libs/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src='js/feed.js'></script>
         <script type="text/javascript" src='app.js'></script>
     </body>
 </html>
