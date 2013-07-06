@@ -94,6 +94,98 @@ function loadFeedInfo(feedURL, feedManager, feedList) {
 	xhr.send();
 }
 
+function loadFeedByObject(feedObject) {
+
+		$("#feed_list").html("");
+
+		console.log('Iniciando a requisição para: ' +  feedObject.feed_url);
+
+		var xhr = new XMLHttpRequest({mozSystem: true});
+
+		xhr.open("GET", feedObject.feed_url, true);
+
+		xhr.onreadystatechange = function() {
+
+			console.log("Requisição com sucesso");
+
+	        if (xhr.status === 200 && xhr.readyState === 4) {
+	        	var feed = jQuery.parseXML(xhr.response);
+        	
+	        	var feedIndex = 0;
+
+	        	if (feedObject.feed_type === 'RSS2') {
+	        		$(feed).find('item').each(function() {
+
+		        		//console.log("Feed Item");
+
+		        		var article = $("<article class='accordion-group article_item'></article>");
+		        		var header = $("<header class='accordion-heading'></header>");
+		        		var header_title = $("<h5></h5>");
+		        		var header_title_url = $("<a class='accordion-toggle article_title' data-toggle='collapse' data-parent='#feed_list' href='#collapse" + feedIndex + "'></a>");
+		        		//var article_image = $("<img class='article_image />'");
+		        		var section_content = $("<section id='collapse" + feedIndex +  "' class='article_content accordion-body collapse'></section>");
+		        		var section_content_inner = $("<div class='accordion-inner'></div>");
+
+		        		//$(header_title_url).attr("href", $(this).find('link').text())
+		        		$(header_title_url).text($(this).find('title').text());
+
+		        		$(section_content_inner).html($(this).find('description').text())
+		        		$(section_content).append(section_content_inner);
+
+		        		$(header_title).append(header_title_url);
+		        		$(header).append(header_title);
+		        		$(article).append(header);
+		        		$(article).append(section_content);
+
+		        		$("#feed_list").append(article);
+
+		        		feedIndex++;
+		        		
+		        	});
+				} else if (feedObject.feed_type === 'ATOM') {
+
+					$(feed).find('entry').each(function() {
+
+						var article = $("<article class='accordion-group article_item'></article>");
+						var header = $("<header class='accordion-heading'></header>");
+						var header_title = $("<h5></h5>");
+						var header_title_url = $("<a class='accordion-toggle article_title' data-toggle='collapse' data-parent='#feed_list' href='#collapse" + feedIndex + "'></a>");
+						//var article_image = $("<img class='article_image />'");
+						var section_content = $("<section id='collapse" + feedIndex +  "' class='article_content accordion-body collapse'></section>");
+						var section_content_inner = $("<div class='accordion-inner'></div>");
+
+						//$(header_title_url).attr("href", $(this).find('link').text())
+						$(header_title_url).text($(this).find('title').text());
+
+						$(section_content_inner).html($(this).find('content').text())
+						$(section_content).append(section_content_inner);
+
+						$(header_title).append(header_title_url);
+						$(header).append(header_title);
+						$(article).append(header);
+						$(article).append(section_content);
+
+						$("#feed_list").append(article);
+
+						feedIndex++;
+						
+					});
+
+				}
+
+	        	
+	        }
+	        
+	    }
+
+	    xhr.onerror = function () {
+			console.log("Request Error");
+		}
+
+		xhr.send();
+
+}
+
 function loadFeed(feedURL) {
 
 	var xhr = new XMLHttpRequest({mozSystem: true});
@@ -157,7 +249,7 @@ function loadFeedList(feedList) {
 		feedList.forEach(function(feed) {
 			feed_item_li = $("<li></li>");
 			feed_item_icon = $("<i class='icon-rss'></i>");
-			feed_item_title = $("<a class='feed_item' href='#' data-target='" + feed.feed_link + "'></a>");
+			feed_item_title = $("<a class='feed_item' href='javascript:void(0);' data-target='" + feed.feed_link + "'></a>");
 			$(feed_item_title).append(feed_item_icon);
 			$(feed_item_title).append(" - <span>" + feed.feed_title + "</span><i class='icon-double-angle-right pull-right'></i>");
 
@@ -181,12 +273,6 @@ $(document).ready(function() {
 	$("#user_feeds").show();
 	$("#feed_view").hide();
 	$("#add_feed").hide();
-
-	if (window.mozIndexedDB) {
-        window.indexedDB = window.mozIndexedDB;
-        window.IDBKeyRange = window.IDBKeyRange;
-        window.IDBTransaction = window.IDBTransaction;
-	}
 
 	feed_manager = new FeedManager();
 
@@ -217,57 +303,30 @@ $(document).ready(function() {
 		$("#feed_view").hide();
 		$("#add_feed").hide();
 
-		loadFeedList(feedArray);
+		//loadFeedList(feedArray);
 	});
 
 	$(".feed_item").click(function() {
-		console.log($(this).attr("data-target"));
+
+		var feed_url = $(this).attr("data-target");
+
+		var feed = $.grep(feedArray, function(e){ return e.feed_link == feed_url; });
+			
+		feed = feed[0];
+
+		console.log(feed.feed_title);
+
+		loadFeedByObject(feed);
+
+		$("#user_feeds").hide();
+		$("#feed_view").show();
+		$("#add_feed").hide();
 	});
 
-	$("#btn_refresh").click(function() {
-
-		//loadFeed("http://feeds.feedburner.com/meiobit");
-		//http://www.theverge.com/rss/index.xml
-		//http://feeds.feedburner.com/kotakubr
-		//http://br-linux.org/feed
-
-		//var redirect_url = getURLParameter("url");
-		//var redirect_url = "http://www.polygon.com/2013/7/4/4493108/final-fantasy-7-now-available-on-steam";
-
-		//var full_url = readability_base_url + redirect_url + "&token=" + readability_token;
-
-		//var xhr = new XMLHttpRequest({mozSystem: true});
-		// Faz a requisição para a URL desejada.
-		//console.log(full_url);
-		//xhr.open("GET", full_url, true);
-
-		//console.log("Start Request");
-		// Trata a resposta com sucesso
-		/*xhr.onreadystatechange = function () {
-	        if (xhr.status === 200 && xhr.readyState === 4) {
-	        	console.log("Request OK");
-	        	var article = jQuery.parseJSON(xhr.response);
-	        	console.log(xhr.response);
-
-	        	$("#article_title").attr("href", article.url);
-	        	$("#article_title").html(article.title);
-
-	        	$("#article_image").attr("src", article.lead_image_url);
-	        	
-	        	$("#article_content").html(article.content);
-	            //crossDomainXHRDisplay.innerHTML = "<h4>Result from Cross-domain XHR</h4>" + xhr.response;
-	            //crossDomainXHRDisplay.style.display = "block";
-	        }
-	    }*/
-
-	    // Trata a resposta com erro
-	    /*xhr.onerror = function () {
-	    	console.log("Request Error");
-	    	$('#api_request').html("<h4>Result from Cross-domain XHR</h4><p>Cross-domain XHR failed</p>");
-	    };
-
-	    // Envia a requisição
-	    xhr.send();*/
+	$("#btn_home").click(function() {
+		$("#user_feeds").show();
+		$("#feed_view").hide();
+		$("#add_feed").hide();
 	});
 	
 	var activity = new MozActivity({
